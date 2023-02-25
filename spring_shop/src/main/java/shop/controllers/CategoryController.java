@@ -26,6 +26,7 @@ public class CategoryController {
     public ResponseEntity<CategoryEntity> create(@RequestBody CategoryCreateDTO model){
         CategoryEntity category = new CategoryEntity();
         category.setName(model.getName());
+        category.setImage(model.getImage());
         categoryRepository.save(category);
         return  new ResponseEntity<>(category,HttpStatus.CREATED);
     }
