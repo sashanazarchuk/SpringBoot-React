@@ -5,7 +5,7 @@ import React from 'react'
 
 const navigation = [
     { name: 'Dashboard', href: 'home', current: true },
-    { name: 'Team', href: 'team', current: false },
+    { name: 'Add Category', href: 'addcategory', current: false },
     { name: 'Projects', href: 'projects', current: false },
     { name: 'Calendar', href: 'calendar', current: false },
 ]
