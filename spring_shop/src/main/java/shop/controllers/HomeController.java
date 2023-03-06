@@ -39,9 +39,14 @@ public class HomeController {
         return fileName;
     }
 
+    //метод для завантаження файла на сервер і повернення його імені
+    //зазначаю шлях за яким буде доступний контроллер
     @PostMapping(value="/form/upload", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+    //приймаю файл типу MultipartFile який буде передано у відповідному полі
     public String formupload(@RequestParam("file")MultipartFile file) {
+        //зберігаю завантажений файл на сервері
         String fileName = storageService.saveMultipartFile(file);
+        //повертаю ім'я збереженого файла у вигляді рядка
         return fileName;
     }
 }

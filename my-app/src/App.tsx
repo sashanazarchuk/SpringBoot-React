@@ -1,6 +1,4 @@
 import './App.css';
-import Navbar from './components/tailwind/Navbars';
-import Pagination from './components/tailwind/Pagination';
 import Home from './components/home';
 import { Route, Routes } from 'react-router-dom';
 import Yourprofile from './components/profile/yourprofile';

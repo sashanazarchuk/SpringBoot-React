@@ -1,30 +1,22 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import { APP_ENV } from "../../env";
 import http from "../../http_common";
-import { ICategoryItem, ICategoryResponse } from "./types";
- import { CategoryActionTypes, GetCategoryAction, ICategoryState } from "./types";
+import { CategoryActionTypes, ICategoryItem } from "./types";
 
 
 const Home = () => {
-  const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
-  // const { category_list } = useSelector((state: any) => state.product as ICategoryState);
-  // const dispatch = useDispatch();
-
+  const dispatch = useDispatch();
+  const list = useSelector((store: any) => store.categories as Array<ICategoryItem>);
   useEffect(() => {
-
+    //роблю запит до сервера за списком категорій
     http.get<Array<ICategoryItem>>("/api/categories").then((res) => {
       console.log("List categories", res);
-      // const { data } = res;
-      setCategories(res.data);
-      // const payload: ICategoryState = {
-      //   category_list: data.data
-      // };
-      // const action: GetCategoryAction = {
-      //   type: CategoryActionTypes.GET_CATEGORIES,
-      //   payload: payload
-      // }
-      // dispatch(action);
+      //з сервера отримую список категорій
+      const { data } = res;
+      //викликаю dispatch для відправки action до store для оновлення стану додатку
+      dispatch({ type: CategoryActionTypes.GET_CATEGORIES, payload: data });
     });
   }, []);
 
@@ -39,11 +31,11 @@ const Home = () => {
             <h2 className="text-2xl font-bold text-gray-900">Колекції</h2>
 
             <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-              {categories.map((c) => (
+              {list.map((c) => (
                 <div key={c.name} className="group relative">
                   <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
                     <img
-                      src={`http://localhost:8080/files/${c.image}`}
+                      src={APP_ENV.REMOTE_HOST_NAME + "files/" + c.image}
                       className="h-full w-full object-cover object-center"
                     />
                   </div>

@@ -1,19 +1,29 @@
-import { CategoryAction, CategoryActionTypes, ICategoryState } from "./types";
+import { ICategoryItem, CategoryActionTypes } from './types';
 
-const initialState: ICategoryState = {
-    category_list: []
-};
+//оголошую змінну яка буде містити массив категорій
+const initState: Array<ICategoryItem> = [
+    // {
+    //     id: 1,
+    //     name: "Dogi",
+    //     description: "Dogi dogi",
+    //     image: "dogi.jpg"
+    // }
+];
 
-export const categoryReducer = (state = initialState, action: CategoryAction): ICategoryState => {
 
+//експортую функцію редюсера який приймає state і action в якості параметрів 
+export const CategoryReducer = (state = initState, action: any) => {
     switch (action.type) {
+        //описую запит на отримання списку категорій
         case CategoryActionTypes.GET_CATEGORIES: {
-            return {
-                ...state,
-                ...action.payload
-            }
+            //отримую список категорій з сервера і конвертую в масив
+            const payload: Array<ICategoryItem> = action.payload as [];
+            //повертаю дані отримані з сервера
+            return payload;
+
+
         }
     }
+    //повертаю початковий стан якщо тип дії не відповідає жодному з визначених
     return state;
 }
-export default categoryReducer

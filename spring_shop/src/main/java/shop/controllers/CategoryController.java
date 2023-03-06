@@ -31,13 +31,20 @@ public class CategoryController {
         return new ResponseEntity<>(model, HttpStatus.OK);
     }
 
+    //Роблю пост запит який отримує дані у форматі multipart/form-data для створення категорії та фото
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryItemDTO> create(@ModelAttribute CategoryCreateDTO model) {
+        //створюю новий запис категорії у бд
         var fileName = storageService.saveMultipartFile(model.getFile());
+        //створюю новий об'єкт що містить дані нової категорії
         CategoryEntity category = categoryMapper.CategoryByCreateDTO(model);
+        //добавляю фото
         category.setImage(fileName);
+        //зберігаю категорію
         categoryRepository.save(category);
+        //реалізую маппінг даних
         var result = categoryMapper.CategoryItemByCategory(category);
+        //створюю об'єкт зі статусом 201 який відправляється клієнту
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
     @PutMapping("{id}")

@@ -11,6 +11,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
+  // передаю store в компонент Provider в якості властивості store яка огортає компонент App
   <Provider store={store}>
     <BrowserRouter>
       <App />

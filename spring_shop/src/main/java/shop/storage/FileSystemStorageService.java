@@ -53,9 +53,12 @@ public class FileSystemStorageService implements StorageService {
             if(base64.isEmpty()) {
                 throw new StorageException("Пустий base64");
             }
+            // Генерування випадкового ідентифікатора для імені файлу
             UUID uuid = UUID.randomUUID();
+            // Розбивка переданого рядка на тип зображення та код в форматі base64
             String [] charArray = base64.split(",");
             String extension;
+            // Визначення типу зображення
             switch(charArray[0]) {
                 case "data:image/png;base64":
                     extension="png";
@@ -64,24 +67,37 @@ public class FileSystemStorageService implements StorageService {
                     extension="jpg";
                     break;
             }
+            //Формування імені файлу з випадковим ідентифікатором та визначенням типу зображення
             String randomFileName = uuid.toString()+"."+extension;
+            // Декодування коду зображення в форматі base64
             Base64.Decoder decoder = Base64.getDecoder();
             byte [] bytes = new byte[0];
             bytes = decoder.decode(charArray[1]);
+            // Визначення розмірів зображень для збереження
             int [] imageSize = {32,150, 300, 600, 1200};
+            // Створення байтового потоку з декодованим зображенням
             try(var byteStream = new ByteArrayInputStream(bytes)) {
+                // Читання зображення з байтового потоку
                 var image = ImageIO.read(byteStream);
+                // Ітерація по масиву розмірів зображень для збереження
                 for(int size : imageSize) {
+                    // Формування шляху для збереження файлу з конкретним розміром
                     String fileSaveItem = rootLocation.toString()+"/"+size+"_"+randomFileName;
+                    // Зменшення розміру зображення та його форматування
                     BufferedImage newImg = ImageUtils.resizeImage(image,
                             extension=="jpg" ? ImageUtils.IMAGE_JPEG: ImageUtils.IMAGE_PNG, size, size);
+                    // Створення байтового потоку для запису зображення
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    // Запис зменшеного зображення у байтовий потік
                     ImageIO.write(newImg, extension, byteArrayOutputStream);
+                    // Конвертація байтів зображення з потоку у масив байтів
                     byte [] newBytes = byteArrayOutputStream.toByteArray();
+                    // Запис зображення у файл
                     FileOutputStream out = new FileOutputStream(fileSaveItem);
                     out.write(newBytes);
                     out.close();
                 }
+                // Обробка помилок
             } catch(IOException e) {
                 throw new StorageException("Проблема перетворення фото", e);
             }
@@ -91,28 +107,47 @@ public class FileSystemStorageService implements StorageService {
             throw new StorageException("Проблема при збережні та перетворені base64",e);
         }
     }
+
+    // метод збереження зображення з файлу
     @Override
     public String saveMultipartFile(MultipartFile file) {
         try {
+            // створення унікального ідентифікатора
             UUID uuid = UUID.randomUUID();
+            // змінна для збереження розширення файлу
             String extension="jpg";
+            // створення імені файлу
             String randomFileName = uuid.toString()+"."+extension;
+            // створення декодера Base64
             Base64.Decoder decoder = Base64.getDecoder();
+            // зчитування байтів файлу
             byte [] bytes = file.getBytes();
+            // масив розмірів зображення
             int [] imageSize = {32,150, 300, 600, 1200};
             try(var byteStream = new ByteArrayInputStream(bytes)) {
+                // зчитування зображення з байтів
                 var image = ImageIO.read(byteStream);
+                // цикл для збереження зображення в різних розмірах
                 for(int size : imageSize) {
+                    // створення шляху для збереження файлу
                     String fileSaveItem = rootLocation.toString()+"/"+size+"_"+randomFileName;
+                    // зміна розміру зображення
                     BufferedImage newImg = ImageUtils.resizeImage(image,
                             extension=="jpg" ? ImageUtils.IMAGE_JPEG: ImageUtils.IMAGE_PNG, size, size);
+                    // створення потоку для байтів зображення
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    // збереження зображення у байтах в потік
                     ImageIO.write(newImg, extension, byteArrayOutputStream);
+                    // збереження байтів з потоку у масив
                     byte [] newBytes = byteArrayOutputStream.toByteArray();
+                    // створення потоку виводу
                     FileOutputStream out = new FileOutputStream(fileSaveItem);
+                    // запис байтів у файл
                     out.write(newBytes);
+                    // закриття потоку виводу
                     out.close();
                 }
+                // обробка помилок
             } catch(IOException e) {
                 throw new StorageException("Проблема перетворення фото", e);
             }
