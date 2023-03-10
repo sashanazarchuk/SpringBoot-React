@@ -9,7 +9,7 @@ const CreateCategoryPage = () => {
     const [model, setModel] = useState<IAddCategory>({
         name: "",
         description: "",
-        base64: ""
+        file: null
     });
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -21,12 +21,7 @@ const CreateCategoryPage = () => {
         const { files } = target;
         if (files) {
             const file = files[0];
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = (readFile) => {
-                const result = readFile.target?.result as string;
-                setModel({ ...model, "base64": result });
-            }
+            setModel({ ...model, file });
         }
         target.value = "";
     }
@@ -34,7 +29,10 @@ const CreateCategoryPage = () => {
         e.preventDefault();
 
         try {
-            const item = await axios.post("http://localhost:8080/api/categories", model);
+            const item = await axios.post("http://localhost:8080/api/categories", model,
+                {
+                    headers: { "Content-Type": "multipart/form-data" }
+                });
             console.log("Server save category", item);
             navigator("/");
         } catch (error: any) {
@@ -80,12 +78,12 @@ const CreateCategoryPage = () => {
 
                             <div className="mt-1 flex items-center">
                                 <label htmlFor="selectImage" className="inline-block w-20 overflow-hidden bg-gray-100">
-                                    {model.base64 === "" ? (
+                                    {model.file === null ? (
                                         <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                                         </svg>
                                     ) : (
-                                        <img src={model.base64} />
+                                        <img src={URL.createObjectURL(model.file)} />
                                     )}
                                 </label>
                                 <label
@@ -99,7 +97,7 @@ const CreateCategoryPage = () => {
                         </div>
                     </div>
                     <div className="space-x-4 mt-8">
-                        <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50">
+                        <button type="submit"  className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50">
                             Додати
                         </button>
                         <Link to="home" className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50">

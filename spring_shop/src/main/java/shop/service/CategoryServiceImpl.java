@@ -21,12 +21,11 @@ public class CategoryServiceImpl implements CategoryService {
     private final StorageService storageService;
     @Override
     public CategoryItemDTO create(CategoryCreateDTO model) {
-        var fileName = storageService.save(model.getBase64());
+        var fileName = storageService.saveMultipartFile(model.getFile());
         CategoryEntity category = categoryMapper.CategoryByCreateDTO(model);
         category.setImage(fileName);
         categoryRepository.save(category);
-        var result = categoryMapper.CategoryItemByCategory(category);
-        return result;
+        return categoryMapper.CategoryItemByCategory(category);
     }
 
     @Override

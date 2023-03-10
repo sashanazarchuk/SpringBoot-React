@@ -7,5 +7,6 @@ export interface ICategoryItem {
 
 
 export enum CategoryActionTypes {
-    GET_CATEGORIES = "GET_CATEGORIES_ACTION"
+    GET_CATEGORIES = "GET_CATEGORIES_ACTION",
+    DELETE_CATEGORY = "DELETE_CATEGORY"
 }

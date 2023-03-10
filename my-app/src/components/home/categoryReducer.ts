@@ -8,6 +8,7 @@ const initState: Array<ICategoryItem> = [
     //     description: "Dogi dogi",
     //     image: "dogi.jpg"
     // }
+
 ];
 
 
@@ -20,9 +21,12 @@ export const CategoryReducer = (state = initState, action: any) => {
             const payload: Array<ICategoryItem> = action.payload as [];
             //повертаю дані отримані з сервера
             return payload;
-
-
         }
+        case CategoryActionTypes.DELETE_CATEGORY: {
+            return state.filter(category => category.id !== action.payload);
+        }
+        default:
+            return state;
     }
     //повертаю початковий стан якщо тип дії не відповідає жодному з визначених
     return state;

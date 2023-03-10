@@ -9,19 +9,27 @@ import { CategoryActionTypes, ICategoryItem } from "./types";
 const Home = () => {
   const dispatch = useDispatch();
   const list = useSelector((store: any) => store.categories as Array<ICategoryItem>);
-  useEffect(() => {
-    //роблю запит до сервера за списком категорій
+  const fetchCategories = async () => {
     http.get<Array<ICategoryItem>>("/api/categories").then((res) => {
       console.log("List categories", res);
-      //з сервера отримую список категорій
       const { data } = res;
-      //викликаю dispatch для відправки action до store для оновлення стану додатку
       dispatch({ type: CategoryActionTypes.GET_CATEGORIES, payload: data });
     });
+  }
+  const handleDeleteCategory = async (id: number) => {
+    console.log("Deleting category with id:", id);
+    try {
+      await http.delete(`/api/categories/${id}`);
+      dispatch({ type: CategoryActionTypes.DELETE_CATEGORY, payload: id });
+      fetchCategories();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
-
-
-
 
   return (
     <>
@@ -32,27 +40,29 @@ const Home = () => {
 
             <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
               {list.map((c) => (
-                <div key={c.name} className="group relative">
+                <div key={c.id} className="group relative">
                   <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
                     <img
-                      src={APP_ENV.REMOTE_HOST_NAME + "files/" + c.image}
+                      src={"http://localhost:8080/files/600_" + c.image}
+                      alt={c.name}
                       className="h-full w-full object-cover object-center"
                     />
                   </div>
-                  <h3 className="mt-6 text-sm text-gray-500">
-                    <a>
-                      <span className="absolute inset-0" />
+                  <h3 className="text-sm text-gray-500">
+                    <span>
                       {c.name}
-                    </a>
+                    </span>
                   </h3>
-                  <p className="text-base font-semibold text-gray-900">{c.description}</p>
+                  <p className="text-base font-semibold text-gray-900">
+                    {c.description}
+                  </p>
+                  <button type="button" onClick={() => handleDeleteCategory(c.id)} className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mb-5">Delete</button>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-
     </>
   )
 }
