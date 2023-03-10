@@ -1,11 +1,13 @@
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { CategoryActionTypes } from "../home/types";
 import IAddCategory from "./types";
 
 const CreateCategoryPage = () => {
     const navigator = useNavigate();
-
+    const dispatch = useDispatch();
     const [model, setModel] = useState<IAddCategory>({
         name: "",
         description: "",
@@ -33,8 +35,12 @@ const CreateCategoryPage = () => {
                 {
                     headers: { "Content-Type": "multipart/form-data" }
                 });
+            navigator("/home");
+            dispatch({
+                type: CategoryActionTypes.CREATE_CATEGORY,
+                payload: item.data,
+            });
             console.log("Server save category", item);
-            navigator("/");
         } catch (error: any) {
             console.log("Помилка", error);
         }
@@ -97,7 +103,7 @@ const CreateCategoryPage = () => {
                         </div>
                     </div>
                     <div className="space-x-4 mt-8">
-                        <button type="submit"  className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50">
+                        <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50">
                             Додати
                         </button>
                         <Link to="home" className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50">
@@ -110,3 +116,5 @@ const CreateCategoryPage = () => {
     );
 };
 export default CreateCategoryPage
+
+

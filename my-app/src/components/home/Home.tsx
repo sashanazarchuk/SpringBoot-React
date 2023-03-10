@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { APP_ENV } from "../../env";
 import http from "../../http_common";
 import { CategoryActionTypes, ICategoryItem } from "./types";
 

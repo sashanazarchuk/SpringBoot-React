@@ -22,6 +22,11 @@ export const CategoryReducer = (state = initState, action: any) => {
             //повертаю дані отримані з сервера
             return payload;
         }
+        case CategoryActionTypes.CREATE_CATEGORY: {
+            return [
+                ...state, action.payload
+            ];
+        }
         case CategoryActionTypes.DELETE_CATEGORY: {
             return state.filter(category => category.id !== action.payload);
         }
